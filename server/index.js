@@ -53,7 +53,7 @@ app.get('/actorsPenelope', (req, res) => {
 
 //SQL = SELECT * FROM actor WHERE first_name = "Penelope" AND last_name = "Guiness"
 app.get('/actorsPenelopeGuiness', (req, res) => {
-    // simple SELECT with WHERE clause
+    // simple SELECT with WHERE clause 
     connection.query('SELECT * FROM actor' + ' WHERE first_name = "Penelope" AND last_name = "Guiness"', (err, results) => {
         if (err) {
             res.status(500).send('Error retrieving data from database');
@@ -91,7 +91,7 @@ app.get('/actorsCount', (req, res) => {
 
 // SQL = SELECT COUNT(*) FROM actor WHERE first_name = "Penelope"
 app.get('/actorsCountPenelope', (req, res) => {
-    // simple SELECT with COUNT
+    // simple SELECT with COUNT and WHERE clause
     connection.query('SELECT COUNT(*) FROM actor WHERE first_name = "Penelope"', (err, results) => {
         if (err) {
             res.status(500).send('Error retrieving data from database');
@@ -127,13 +127,10 @@ app.get('/actorsCountDistinctPenelope', (req, res) => {
     });
 });
 
-
-// LIKE clause % = any number of characters _ = any single character
-
-// SQL = SELECT last_name, first_name FROM actor WHERE last_name LIKE "W%"
-app.get('/actorsLike', (req, res) => {
-    // simple SELECT with LIKE clause 
-    connection.query('SELECT last_name, first_name FROM actor WHERE last_name LIKE "W%"', (err, results) => {
+// SQL = SELECT customer_id, rental_id, rental_date FROM rental WHERE rental_date BETWEEN "2005-05-25" AND "2005-05-28"
+app.get('/rentalsBetween', (req, res) => {
+    // simple SELECT with WHERE clause and BETWEEN clause
+    connection.query('SELECT customer_id, rental_id, rental_date FROM rental WHERE rental_date BETWEEN "2005-05-25" AND "2005-05-28"', (err, results) => {
         if (err) {
             res.status(500).send('Error retrieving data from database');
         } else {
@@ -142,6 +139,32 @@ app.get('/actorsLike', (req, res) => {
     });
 });
 
+
+// SQL = SELECT customer_id, rental_id, rental_date FROM rental WHERE customer_id IN (1, 2, 3)
+app.get('/rentalsIn', (req, res) => {
+    // simple SELECT with WHERE clause and IN clause
+    connection.query('SELECT customer_id, rental_id, rental_date FROM rental WHERE customer_id IN (1, 2, 3)', (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving data from database');
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+// LIKE clause % = any number of characters _ = any single character
+
+// SQL = SELECT last_name, first_name FROM actor WHERE last_name LIKE "W%"
+app.get('/actorsLike', (req, res) => {
+    // simple SELECT with WHERE clause and LIKE clause
+    connection.query('SELECT last_name, first_name FROM actor WHERE last_name LIKE "W%"', (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving data from database');
+        } else {
+            res.json(results);
+        }
+    });
+});
 
 // ORDER BY clause  ASC = ascending order DESC = descending order 
 
@@ -161,7 +184,7 @@ app.get('/actorsOrder', (req, res) => {
 
 // SQL = SELECT  actor_id, first_name, last_name FROM actor ORDER BY first_name ASC LIMIT 10
 app.get('/actorsLimit', (req, res) => {
-    // simple SELECT with LIMIT clause
+    // simple SELECT with LIMIT clause and ORDER BY clause
     connection.query('SELECT  actor_id, first_name, last_name FROM actor ORDER BY first_name ASC LIMIT 10', (err, results) => {
         if (err) {
             res.status(500).send('Error retrieving data from database');
@@ -200,3 +223,36 @@ app.get('/paymentSum', (req, res) => {
 });
 
 
+// INNER JOIN  permets de lier plusieurs tables entre elles, retourne les enregistrements lorsqu'il y a au moins une ligne de chaque colonne qui correspond aux conditions de jointure.
+
+// SELECT column_name(s) FROM table1 INNER JOIN table2 ON table1.column_name = table2.column_name;
+
+// SQL = SELECT actor.first_name, actor.last_name, film.title FROM actor INNER JOIN film_actor ON actor.actor_id = film_actor.actor_id INNER JOIN film ON film_actor.film_id = film.film_id WHERE actor.first_name = "Penelope" AND actor.last_name = "Guiness"
+app.get('/actorsFilms', (req, res) => {
+    // simple SELECT with INNER JOIN and WHERE clause
+    connection.query('SELECT actor.first_name, actor.last_name, film.title FROM actor INNER JOIN film_actor ON actor.actor_id = film_actor.actor_id INNER JOIN film ON film_actor.film_id = film.film_id WHERE actor.first_name = "Penelope" AND actor.last_name = "Guiness"', (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving data from database');
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+// Right JOIN  retourne tous les enregistrements de la table de droite (table2), meme si il n'y a pas de correspondance dans la table de gauche (table1).
+
+// SELECT column_name(s) FROM table1 RIGHT JOIN table2 ON table1.column_name = table2.column_name;
+
+// SQL = SELECT c.customer_id, c.first_name, c.last_name, p.payment_id, p.amount FROM customer c RIGHT JOIN payment p ON c.customer_id = p.customer_id
+
+app.get('/rightJoin', (req, res) => {
+    // simple SELECT with RIGHT JOIN
+    connection.query('SELECT c.customer_id, c.first_name, c.last_name, p.payment_id, p.amount FROM customer c RIGHT JOIN payment p ON c.customer_id = p.customer_id', (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving data from database');
+        } else {
+            res.json(results);
+        }
+    });
+});
