@@ -227,10 +227,11 @@ app.get('/paymentSum', (req, res) => {
 
 // SELECT column_name(s) FROM table1 INNER JOIN table2 ON table1.column_name = table2.column_name;
 
-// SQL = SELECT actor.first_name, actor.last_name, film.title FROM actor INNER JOIN film_actor ON actor.actor_id = film_actor.actor_id INNER JOIN film ON film_actor.film_id = film.film_id WHERE actor.first_name = "Penelope" AND actor.last_name = "Guiness"
-app.get('/actorsFilms', (req, res) => {
-    // simple SELECT with INNER JOIN and WHERE clause
-    connection.query('SELECT actor.first_name, actor.last_name, film.title FROM actor INNER JOIN film_actor ON actor.actor_id = film_actor.actor_id INNER JOIN film ON film_actor.film_id = film.film_id WHERE actor.first_name = "Penelope" AND actor.last_name = "Guiness"', (err, results) => {
+// SQL = SELECT customer.customer_id, first_name, last_name, email, payment_date FROM customer INNER JOIN payment ON customer.customer_id = payment.customer_id
+
+app.get('/innerJoin', (req, res) => {
+    // simple SELECT with INNER JOIN
+    connection.query('SELECT customer.customer_id, first_name, last_name, email, payment_date FROM customer INNER JOIN payment ON customer.customer_id = payment.customer_id', (err, results) => {
         if (err) {
             res.status(500).send('Error retrieving data from database');
         } else {
@@ -238,7 +239,6 @@ app.get('/actorsFilms', (req, res) => {
         }
     });
 });
-
 
 // Right JOIN  retourne tous les enregistrements de la table de droite (table2), meme si il n'y a pas de correspondance dans la table de gauche (table1).
 
